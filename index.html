@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Status Anzeige</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: #0a0a0a;
+            background: radial-gradient(circle at center, #1a1a1a, #000000);
+        }
+        
+        .status {
+            position: relative;
+            padding: 25px 50px;
+            border-radius: 15px;
+            background: rgba(30, 30, 30, 0.9);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 28px;
+            font-weight: 500;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            display: none;
+        }
+
+        .status::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            border-radius: 16px;
+            background: transparent;
+            z-index: -1;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .erreichbar {
+            color: #4eff75;
+            text-shadow: 0 0 10px rgba(78, 255, 117, 0.5);
+            background: linear-gradient(145deg, 
+                rgba(30, 30, 30, 0.9),
+                rgba(78, 255, 117, 0.1));
+        }
+        .erreichbar::before {
+            box-shadow: 0 0 25px 5px rgba(78, 255, 117, 0.5);
+        }
+
+        .im-call {
+            color: #ff4e4e;
+            text-shadow: 0 0 10px rgba(255, 78, 78, 0.5);
+            background: linear-gradient(145deg, 
+                rgba(30, 30, 30, 0.9),
+                rgba(255, 78, 78, 0.1));
+        }
+        .im-call::before {
+            box-shadow: 0 0 25px 5px rgba(255, 78, 78, 0.5);
+        }
+
+        .ingame {
+            color: #ff4e4e;
+            text-shadow: 0 0 10px rgba(255, 78, 78, 0.5);
+            background: linear-gradient(145deg, 
+                rgba(30, 30, 30, 0.9),
+                rgba(255, 78, 78, 0.1));
+        }
+        .ingame::before {
+            box-shadow: 0 0 25px 5px rgba(255, 78, 78, 0.5);
+        }
+
+        .nicht-ingame {
+            color: #ffe54e;
+            text-shadow: 0 0 10px rgba(255, 229, 78, 0.5);
+            background: linear-gradient(145deg, 
+                rgba(30, 30, 30, 0.9),
+                rgba(255, 229, 78, 0.1));
+        }
+        .nicht-ingame::before {
+            box-shadow: 0 0 25px 5px rgba(255, 229, 78, 0.5);
+        }
+
+        .live {
+            color: #4ea8ff;
+            text-shadow: 0 0 10px rgba(78, 168, 255, 0.5);
+            background: linear-gradient(145deg, 
+                rgba(30, 30, 30, 0.9),
+                rgba(78, 168, 255, 0.1));
+        }
+        .live::before {
+            box-shadow: 0 0 25px 5px rgba(78, 168, 255, 0.5);
+        }
+
+        @keyframes pulse {
+            0% {
+                opacity: 0.8;
+            }
+            50% {
+                opacity: 0.4;
+            }
+            100% {
+                opacity: 0.8;
+            }
+        }
+
+        .status:hover {
+            transform: scale(1.03);
+            cursor: default;
+        }
+
+        .status:hover::before {
+            opacity: 1;
+        }
+
+        .show {
+            display: block !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="status erreichbar">Erreichbar</div>
+    <div class="status im-call">Im Call</div>
+    <div class="status ingame">Ingame</div>
+    <div class="status nicht-ingame">Nicht Ingame</div>
+    <div class="status live">Live</div>
+
+    <script>
+        async function loadStatus() {
+            try {
+                const response = await fetch('status-config.json');
+                const config = await response.json();
+                
+                // Alle Status-Elemente ausblenden
+                document.querySelectorAll('.status').forEach(el => {
+                    el.classList.remove('show');
+                });
+
+                // Den aktiven Status anzeigen
+                if (config.erreichbar === 1) {
+                    document.querySelector('.erreichbar').classList.add('show');
+                }
+                if (config.imCall === 1) {
+                    document.querySelector('.im-call').classList.add('show');
+                }
+                if (config.ingame === 1) {
+                    document.querySelector('.ingame').classList.add('show');
+                }
+                if (config.nichtIngame === 1) {
+                    document.querySelector('.nicht-ingame').classList.add('show');
+                }
+                if (config.live === 1) {
+                    document.querySelector('.live').classList.add('show');
+                }
+            } catch (error) {
+                console.error('Fehler beim Laden der Konfiguration:', error);
+            }
+        }
+
+        // Status beim Laden der Seite aktualisieren
+        loadStatus();
+
+        // Status alle 5 Sekunden neu laden
+        setInterval(loadStatus, 5000);
+    </script>
+</body>
+</html>

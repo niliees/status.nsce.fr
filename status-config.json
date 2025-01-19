@@ -1,7 +1,7 @@
 {
-    "erreichbar": 1,
+    "erreichbar": 0,
     "imCall": 0,
-    "ingame": 0,
+    "ingame": 1,
     "nichtIngame": 0,
     "live": 0
 }
